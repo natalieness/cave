@@ -54,18 +54,6 @@ print(f"Number of unique IDs in volume: {u_ids.shape[0]}")
 
 
 
-# %% EM image access
-
-# The cloud path the EM remains the same between versions
-em_path = "precomputed://https://bossdb-open-data.s3.amazonaws.com/flywire/fafbv14"
-cv_em = cloudvolume.CloudVolume(em_path, use_https=True, fill_missing=True, mip=1)
-vol = cv_em[65000:66000, 25000:26000, 2500:2510]
-print(vol.shape)
-
-fig, ax = plt.subplots(figsize=(10, 10))
-ax.imshow(vol[..., 0, 0], cmap="gray")
-
-
 
 # %% Mesh access (available from segmentation instance)
 
@@ -96,15 +84,13 @@ mesh_meta = trimesh_io.MeshMeta(cv_path=seg_path, cache_size=10)
 
 # %%
 local_vertices = mesh.get_local_view(5, pc_align=True, method="kdtree")
+
 # %%
-from meshparty import skeleton
+from meshparty.skeletonize import skeletonize_mesh
 
 # Choose a root point (e.g. the vertex closest to centroid)
 root = mesh.vertices[mesh.kdtree.query(mesh.centroid)[1]]
 
-skel = mesh_to_skeleton(mesh, root,
-                        remove_duplicate_vertices=True,
-                        invalidation_d=5000)
-# %%
-skel = cv_seg.skeleton.get(720575940631693610)[720575940631693610]
+skel = skeletonize_mesh(mesh, soma_pt= root, invalidation_d = 10000)
+
 # %%

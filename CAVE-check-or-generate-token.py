@@ -1,9 +1,11 @@
 from caveclient import CAVEclient
-client = CAVEclient()
-auth = client.auth
-print(auth.token)
 
 
-#get new token, this gives instructions on how do do it 
+client = CAVEclient(
+    datastack_name="prieto_godino_fly_larva",
+    server_address="https://proofreading.zetta.ai"
+)
+auth = client.auth()
 
-#auth.get_new_token()
+auth.get_new_token()
+
